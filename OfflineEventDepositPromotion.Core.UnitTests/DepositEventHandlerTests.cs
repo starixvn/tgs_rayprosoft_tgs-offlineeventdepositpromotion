@@ -4,6 +4,7 @@ using NSubstitute;
 using Tgs.Promotion.Clients;
 using Tgs.Promotion.OfflineEvent.Deposit;
 using Tgs.SerialNumberGenerator;
+using Xunit;
 
 namespace OfflineEventDepositPromotion.Core.UnitTests;
 
@@ -22,6 +23,7 @@ public class DepositEventHandlerTests
 		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
 		var fakeTgsRepository = Substitute.For<ITgsRepository>();
 		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>();
+		var fakeStatisticsService = Substitute.For<IStatisticsService>();
 
 		var sut = new DepositEventHandler(
 			promotionId,
@@ -29,7 +31,49 @@ public class DepositEventHandlerTests
 			settings,
 			fakePromotionServiceClient,
 			fakeTgsRepository,
-			fakeSerialNumberGenerator);
+			fakeSerialNumberGenerator,
+			fakeStatisticsService);
+
+		// Act
+		await sut.OnDepositedAsync(playerCode, depositFormId);
+
+		// Assert
+		_ = fakePromotionServiceClient.DidNotReceiveWithAnyArgs()
+			.DistributePromotionBonusAsync(
+				Arg.Any<Guid>(),
+				Arg.Any<string>(),
+				Arg.Any<decimal>(),
+				Arg.Any<decimal>(),
+				Arg.Any<string>(),
+				Arg.Any<Guid?>());
+	}
+
+	[Fact]
+	public async Task 儲值事件發生時玩家已經達到過就不處理()
+	{
+		// Arrange
+		var promotionId = Guid.NewGuid();
+		var brandId = Guid.NewGuid();
+		var playerCode = "test1";
+		var depositFormId = Guid.NewGuid();
+		var settings = new DepositPromotionSettings(new HashSet<string> { "test1" }, 100M, 1000M);
+
+		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+		var fakeTgsRepository = Substitute.For<ITgsRepository>();
+		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>();
+		var fakeStatisticsService = Substitute.For<IStatisticsService>();
+
+		var sut = new DepositEventHandler(
+			promotionId,
+			brandId,
+			settings,
+			fakePromotionServiceClient,
+			fakeTgsRepository,
+			fakeSerialNumberGenerator,
+			fakeStatisticsService);
+
+		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
+			.Returns(true);
 
 		// Act
 		await sut.OnDepositedAsync(playerCode, depositFormId);
@@ -58,6 +102,7 @@ public class DepositEventHandlerTests
 		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
 		var fakeTgsRepository = Substitute.For<ITgsRepository>();
 		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>();
+		var fakeStatisticsService = Substitute.For<IStatisticsService>();
 
 		var sut = new DepositEventHandler(
 			promotionId,
@@ -65,7 +110,11 @@ public class DepositEventHandlerTests
 			settings,
 			fakePromotionServiceClient,
 			fakeTgsRepository,
-			fakeSerialNumberGenerator);
+			fakeSerialNumberGenerator,
+			fakeStatisticsService);
+
+		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
+			.Returns(false);
 
 		var eventId = Guid.NewGuid();
 		_ = fakeSerialNumberGenerator.GenerateAsync()

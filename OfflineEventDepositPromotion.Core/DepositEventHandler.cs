@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Reactive.Linq;
+using System.Text.Json;
 using Tgs.Promotion.Clients;
 using Tgs.SerialNumberGenerator;
 
@@ -12,6 +13,7 @@ internal class DepositEventHandler
 	private readonly IPromotionServiceClient _promotionServiceClient;
 	private readonly ITgsRepository _tgsRepository;
 	private readonly ISerialNumberGenerator _serialNumberGenerator;
+	private readonly IStatisticsService _statisticsService;
 
 	public DepositEventHandler(
 		Guid promotionId,
@@ -19,7 +21,8 @@ internal class DepositEventHandler
 		DepositPromotionSettings settings,
 		IPromotionServiceClient promotionServiceClient,
 		ITgsRepository tgsRepository,
-		ISerialNumberGenerator serialNumberGenerator)
+		ISerialNumberGenerator serialNumberGenerator,
+		IStatisticsService statisticsService)
 	{
 		_promotionId = promotionId;
 		_brandId = brandId;
@@ -27,11 +30,20 @@ internal class DepositEventHandler
 		_promotionServiceClient = promotionServiceClient ?? throw new ArgumentNullException(nameof(promotionServiceClient));
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 		_serialNumberGenerator = serialNumberGenerator ?? throw new ArgumentNullException(nameof(serialNumberGenerator));
+		_statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
 	}
 
 	public async ValueTask OnDepositedAsync(string playerCode, Guid formId, CancellationToken cancellationToken = default)
 	{
 		if (!_settings.Players.Contains(playerCode))
+			return;
+
+		var isAchieve = await _statisticsService.AchievePromotionAsync(
+			_promotionId,
+			playerCode,
+			cancellationToken).ConfigureAwait(false);
+
+		if (isAchieve)
 			return;
 
 		var eventId = await _serialNumberGenerator
