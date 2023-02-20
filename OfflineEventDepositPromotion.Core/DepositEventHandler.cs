@@ -7,15 +7,16 @@ namespace Tgs.Promotion.OfflineEvent.Deposit;
 internal class DepositEventHandler
 {
 	private readonly Guid _promotionId;
-	private readonly Guid _brandId;
 	private readonly DepositPromotionSettings _settings;
 	private readonly IPromotionServiceClient _promotionServiceClient;
 	private readonly ITgsRepository _tgsRepository;
 	private readonly ISerialNumberGenerator _serialNumberGenerator;
 	private readonly IStatisticsService _statisticsService;
 
+	public Guid BrandId { get; }
+
 	public DepositEventHandler(
-		Guid promotionId,
+			Guid promotionId,
 		Guid brandId,
 		DepositPromotionSettings settings,
 		IPromotionServiceClient promotionServiceClient,
@@ -24,7 +25,7 @@ internal class DepositEventHandler
 		IStatisticsService statisticsService)
 	{
 		_promotionId = promotionId;
-		_brandId = brandId;
+		BrandId = brandId;
 		_settings = settings ?? throw new ArgumentNullException(nameof(settings));
 		_promotionServiceClient = promotionServiceClient ?? throw new ArgumentNullException(nameof(promotionServiceClient));
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
@@ -52,7 +53,7 @@ internal class DepositEventHandler
 		var eventData = new OfflineDepositEvent(
 			eventId,
 			playerCode,
-			_brandId,
+			BrandId,
 			_settings.BonusAmount,
 			_settings.BucketAmount,
 			formId,
