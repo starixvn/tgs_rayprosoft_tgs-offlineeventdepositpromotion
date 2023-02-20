@@ -1,5 +1,4 @@
-﻿using System.Reactive.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Tgs.Promotion.Clients;
 using Tgs.SerialNumberGenerator;
 

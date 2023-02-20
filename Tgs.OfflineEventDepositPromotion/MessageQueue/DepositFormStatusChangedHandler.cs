@@ -30,10 +30,12 @@ public class DepositFormStatusChangedHandler : IMessageHandler
 
 		if (previousStatus != depositForm.Status
 			&& depositForm.Status == PaymentFlowState.Approved)
-			_eventSender.PushEventAsync(new DepositedEvent(
-				depositForm.PlayerCode,
-				depositForm.BrandId,
-				depositForm.Id,
-				DateTime.UtcNow));
+			await _eventSender.PushEventAsync(
+				new DepositedEvent(
+					depositForm.PlayerCode,
+					depositForm.BrandId,
+					depositForm.Id,
+					DateTime.UtcNow),
+				cancellationToken).ConfigureAwait(false);
 	}
 }

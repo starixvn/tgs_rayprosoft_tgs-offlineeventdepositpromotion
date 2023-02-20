@@ -4,7 +4,6 @@ using NSubstitute;
 using Tgs.Promotion.Clients;
 using Tgs.Promotion.OfflineEvent.Deposit;
 using Tgs.SerialNumberGenerator;
-using Xunit;
 
 namespace OfflineEventDepositPromotion.Core.UnitTests;
 
