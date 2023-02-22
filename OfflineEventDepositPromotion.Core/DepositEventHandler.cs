@@ -15,9 +15,12 @@ internal class DepositEventHandler
 
 	public Guid BrandId { get; }
 
+	public EventRange EventRange { get; }
+
 	public DepositEventHandler(
-			Guid promotionId,
+		Guid promotionId,
 		Guid brandId,
+		EventRange eventRange,
 		DepositPromotionSettings settings,
 		IPromotionServiceClient promotionServiceClient,
 		ITgsRepository tgsRepository,
@@ -26,6 +29,7 @@ internal class DepositEventHandler
 	{
 		_promotionId = promotionId;
 		BrandId = brandId;
+		EventRange = eventRange ?? throw new ArgumentNullException(nameof(eventRange));
 		_settings = settings ?? throw new ArgumentNullException(nameof(settings));
 		_promotionServiceClient = promotionServiceClient ?? throw new ArgumentNullException(nameof(promotionServiceClient));
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));

@@ -27,6 +27,7 @@ public class DepositEventHandlerTests
 		var sut = new DepositEventHandler(
 			promotionId,
 			brandId,
+			new EventRange(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(1)),
 			settings,
 			fakePromotionServiceClient,
 			fakeTgsRepository,
@@ -65,6 +66,7 @@ public class DepositEventHandlerTests
 		var sut = new DepositEventHandler(
 			promotionId,
 			brandId,
+			new EventRange(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(1)),
 			settings,
 			fakePromotionServiceClient,
 			fakeTgsRepository,
@@ -106,6 +108,7 @@ public class DepositEventHandlerTests
 		var sut = new DepositEventHandler(
 			promotionId,
 			brandId,
+			new EventRange(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(1)),
 			settings,
 			fakePromotionServiceClient,
 			fakeTgsRepository,

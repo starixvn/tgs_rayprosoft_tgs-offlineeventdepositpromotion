@@ -19,6 +19,9 @@ internal class ListBrandDepositEventHandlersQueryService : IGetService<ListBrand
 		ListBrandDepositEventHandlersQuery query,
 		CancellationToken cancellationToken = default)
 		=> (await _promotionServiceClient.ListPromotionsByPromotionTypeAsync("OfflineDepositReward", cancellationToken)
+			.Where(info => new EventRange(
+				info.EventDuring.From.AddHours(-1D),
+				info.EventDuring.To.AddHours(1D)).InTheRange(DateTime.UtcNow))
 			.Select(info => _promotionServiceClient
 				.GetPromotionRuleAsync<DepositPromotionSettings>(info.Id, cancellationToken)
 				.AsTask()
@@ -28,6 +31,7 @@ internal class ListBrandDepositEventHandlersQueryService : IGetService<ListBrand
 					_serviceProvider,
 					info.Id,
 					info.BrandId,
+					new EventRange(info.EventDuring.From, info.EventDuring.To),
 					settings!)))
 			.Merge()
 			.GroupBy(handler => handler.BrandId)

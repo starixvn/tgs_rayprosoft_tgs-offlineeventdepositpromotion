@@ -41,7 +41,10 @@ public class DepositProcessTests
 
 		// Assert
 		_ = fakeBrandHandler.Received(1)
-			.OnDepositedAsync(Arg.Is(command.Event.PlayerCode), Arg.Is(command.Event.FormId));
+			.OnDepositedAsync(
+				Arg.Is(command.Event.PlayerCode),
+				Arg.Is(command.Event.FormId),
+				Arg.Is(command.Event.HappenTime));
 	}
 
 	[Fact]
@@ -61,5 +64,52 @@ public class DepositProcessTests
 		// Assert
 		_ = fakePromotionServiceClient.Received(1)
 			.ListPromotionsByPromotionTypeAsync(Arg.Is("OfflineDepositReward"));
+	}
+
+	[Fact]
+	public async Task 取得系統中所有的線下存款活動處理器_會過濾掉開始時間前一個小時及結束時間後一個小時的資料()
+	{
+		// Arrange
+		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
+		var fakeServiceProvider = new ServiceCollection().BuildServiceProvider();
+
+		var sut = new ListBrandDepositEventHandlersQueryService(
+			fakePromotionServiceClient,
+			fakeServiceProvider);
+
+		var brandId = Guid.NewGuid();
+
+		var promotions = new[] {
+			new PromotionMainInfo
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				EventDuring = (DateTime.UtcNow.AddHours(1.1D), DateTime.UtcNow.AddDays(1D))
+			},
+			new PromotionMainInfo
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				EventDuring = (DateTime.UtcNow, DateTime.UtcNow.AddDays(1D))
+			},
+			new PromotionMainInfo
+			{
+				Id = Guid.NewGuid(),
+				BrandId = brandId,
+				EventDuring = (DateTime.UtcNow, DateTime.UtcNow.AddHours(-1D))
+			}
+		};
+
+		_ = fakePromotionServiceClient.ListPromotionsByPromotionTypeAsync(Arg.Is("OfflineDepositReward"))
+			.Returns(promotions.ToAsyncEnumerable());
+
+		// Act
+		_ = await sut.GetAsync(ListBrandDepositEventHandlersQuery.Default);
+
+		// Assert
+		_ = fakePromotionServiceClient.Received(1)
+			.GetPromotionRuleAsync<DepositPromotionSettings>(Arg.Any<Guid>());
+		_ = fakePromotionServiceClient.Received(1)
+			.GetPromotionRuleAsync<DepositPromotionSettings>(Arg.Is(promotions[1].Id));
 	}
 }

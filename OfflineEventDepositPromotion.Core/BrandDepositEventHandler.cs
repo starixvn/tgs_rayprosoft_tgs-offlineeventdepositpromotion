@@ -16,15 +16,20 @@ internal class BrandDepositEventHandler
 		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 	}
 
-	public virtual async ValueTask OnDepositedAsync(string playerCode, Guid formId, CancellationToken cancellationToken = default)
+	public virtual async ValueTask OnDepositedAsync(
+		string playerCode,
+		Guid formId,
+		DateTime happenTime,
+		CancellationToken cancellationToken = default)
 	{
 		foreach (var handler in _eventHandlers)
 			try
 			{
-				await handler.OnDepositedAsync(
-					playerCode,
-					formId,
-					cancellationToken).ConfigureAwait(false);
+				if (handler.EventRange.InTheRange(happenTime))
+					await handler.OnDepositedAsync(
+						playerCode,
+						formId,
+						cancellationToken).ConfigureAwait(false);
 			}
 			catch (Exception ex)
 			{

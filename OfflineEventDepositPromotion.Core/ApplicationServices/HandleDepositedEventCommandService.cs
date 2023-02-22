@@ -22,6 +22,7 @@ internal class HandleDepositedEventCommandService : ICommandService<HandleDeposi
 			await brandHandler.OnDepositedAsync(
 				command.Event.PlayerCode,
 				command.Event.FormId,
+				command.Event.HappenTime,
 				cancellationToken).ConfigureAwait(false);
 	}
 }
