@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using Tgs.Payment.Clients;
 using Tgs.Promotion.Clients;
 using Tgs.SerialNumberGenerator;
 

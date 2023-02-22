@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "方案項目", "方案項�
 		nuget.config = nuget.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.OfflineEventDepositPromotion.UnitTests", "Tgs.OfflineEventDepositPromotion.UnitTests\Tgs.OfflineEventDepositPromotion.UnitTests.csproj", "{308DD8E9-DB4B-40F9-8368-ECDFB05B5A4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{1F17F620-8F9D-4BFB-B8B4-5F0B94AC894B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F17F620-8F9D-4BFB-B8B4-5F0B94AC894B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F17F620-8F9D-4BFB-B8B4-5F0B94AC894B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{308DD8E9-DB4B-40F9-8368-ECDFB05B5A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{308DD8E9-DB4B-40F9-8368-ECDFB05B5A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{308DD8E9-DB4B-40F9-8368-ECDFB05B5A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{308DD8E9-DB4B-40F9-8368-ECDFB05B5A4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

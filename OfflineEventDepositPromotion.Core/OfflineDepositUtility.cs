@@ -9,6 +9,7 @@ public static class OfflineDepositUtility
 	{
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
 		WriteIndented = false,
+		DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
 		Converters = {
 			new JsonStringEnumConverter()
 		}
