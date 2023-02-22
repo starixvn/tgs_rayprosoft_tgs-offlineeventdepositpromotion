@@ -35,7 +35,8 @@ public class DepositFormStatusChangedHandler : IMessageHandler
 					depositForm.PlayerCode,
 					depositForm.BrandId,
 					depositForm.Id,
-					DateTime.UtcNow),
+					DateTime.UtcNow,
+					depositForm.ActualAmount ?? depositForm.Amount),
 				cancellationToken).ConfigureAwait(false);
 	}
 }

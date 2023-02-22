@@ -23,7 +23,12 @@ public class DepositProcessTests
 		var sut = new HandleDepositedEventCommandService(fakeListBrandHandlersQueryService);
 
 		var command = new HandleDepositedEventCommand(
-			   new DepositedEvent("test1", Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow));
+			   new DepositedEvent(
+				   "test1",
+				   Guid.NewGuid(),
+				   Guid.NewGuid(),
+				   DateTime.UtcNow,
+				   1000M));
 
 		var fakeBrandHandler = Substitute.For<BrandDepositEventHandler>(
 			command.Event.BrandId,
@@ -44,7 +49,8 @@ public class DepositProcessTests
 			.OnDepositedAsync(
 				Arg.Is(command.Event.PlayerCode),
 				Arg.Is(command.Event.FormId),
-				Arg.Is(command.Event.HappenTime));
+				Arg.Is(command.Event.HappenTime),
+				Arg.Is(command.Event.Amount));
 	}
 
 	[Fact]

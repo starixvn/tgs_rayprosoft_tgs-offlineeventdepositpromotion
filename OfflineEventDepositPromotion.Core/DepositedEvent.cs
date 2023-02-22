@@ -3,4 +3,5 @@ public record DepositedEvent(
 	string PlayerCode,
 	Guid BrandId,
 	Guid FormId,
-	DateTime HappenTime);
+	DateTime HappenTime,
+	decimal Amount);

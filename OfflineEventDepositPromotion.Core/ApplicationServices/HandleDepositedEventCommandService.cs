@@ -23,6 +23,7 @@ internal class HandleDepositedEventCommandService : ICommandService<HandleDeposi
 				command.Event.PlayerCode,
 				command.Event.FormId,
 				command.Event.HappenTime,
+				command.Event.Amount,
 				cancellationToken).ConfigureAwait(false);
 	}
 }

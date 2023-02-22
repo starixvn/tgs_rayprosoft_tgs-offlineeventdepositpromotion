@@ -20,6 +20,7 @@ internal class BrandDepositEventHandler
 		string playerCode,
 		Guid formId,
 		DateTime happenTime,
+		decimal depositAmount,
 		CancellationToken cancellationToken = default)
 	{
 		foreach (var handler in _eventHandlers)
@@ -29,6 +30,7 @@ internal class BrandDepositEventHandler
 					await handler.OnDepositedAsync(
 						playerCode,
 						formId,
+						depositAmount,
 						cancellationToken).ConfigureAwait(false);
 			}
 			catch (Exception ex)

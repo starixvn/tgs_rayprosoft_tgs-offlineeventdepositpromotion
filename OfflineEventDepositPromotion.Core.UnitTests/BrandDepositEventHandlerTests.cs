@@ -3,7 +3,6 @@ using NSubstitute;
 using Tgs.Promotion.Clients;
 using Tgs.Promotion.OfflineEvent.Deposit;
 using Tgs.SerialNumberGenerator;
-using Xunit;
 
 namespace OfflineEventDepositPromotion.Core.UnitTests;
 
@@ -18,12 +17,15 @@ public class BrandDepositEventHandlerTests
 		var promotionId = Guid.NewGuid();
 		var playerCode = "test1";
 		var depositFormId = Guid.NewGuid();
-		var settings = new DepositPromotionSettings(new HashSet<string> { "test1" }, 100M, 1000M);
+		var settings = new DepositPromotionSettings(
+			new HashSet<string> { "test1" },
+			10M,
+			new(new[] { new DepositPhase(100M, 20M) }));
 
-		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
-		var fakeTgsRepository = Substitute.For<ITgsRepository>();
-		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>();
-		var fakeStatisticsService = Substitute.For<IStatisticsService>();
+		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>(Array.Empty<DepositPhase>());
+		var fakeTgsRepository = Substitute.For<ITgsRepository>(Array.Empty<DepositPhase>());
+		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>(Array.Empty<DepositPhase>());
+		var fakeStatisticsService = Substitute.For<IStatisticsService>(Array.Empty<DepositPhase>());
 
 		var handlers = new[]
 		{
@@ -61,15 +63,15 @@ public class BrandDepositEventHandlerTests
 			.Returns(new PromotionDistributePlanInfo(planId, Guid.NewGuid(), promotionId, 0L));
 
 		// Act
-		await sut.OnDepositedAsync(playerCode, depositFormId, DateTime.Now);
+		await sut.OnDepositedAsync(playerCode, depositFormId, DateTime.Now, 1000M);
 
 		// Assert
 		_ = fakePromotionServiceClient.Received(2)
 			.DistributePromotionBonusAsync(
 				Arg.Is(planId),
 				Arg.Is(playerCode),
-				Arg.Is(settings.BonusAmount),
-				Arg.Is(settings.BucketAmount),
+				Arg.Is(20M),
+				Arg.Is(200M),
 				Arg.Is(default(string)),
 				Arg.Is(eventId));
 	}
@@ -83,12 +85,15 @@ public class BrandDepositEventHandlerTests
 		var promotionId = Guid.NewGuid();
 		var playerCode = "test1";
 		var depositFormId = Guid.NewGuid();
-		var settings = new DepositPromotionSettings(new HashSet<string> { "test1" }, 100M, 1000M);
+		var settings = new DepositPromotionSettings(
+			new HashSet<string> { "test1" },
+			10M,
+			new(new[] { new DepositPhase(100M, 20M) }));
 
-		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>();
-		var fakeTgsRepository = Substitute.For<ITgsRepository>();
-		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>();
-		var fakeStatisticsService = Substitute.For<IStatisticsService>();
+		var fakePromotionServiceClient = Substitute.For<IPromotionServiceClient>(Array.Empty<DepositPhase>());
+		var fakeTgsRepository = Substitute.For<ITgsRepository>(Array.Empty<DepositPhase>());
+		var fakeSerialNumberGenerator = Substitute.For<ISerialNumberGenerator>(Array.Empty<DepositPhase>());
+		var fakeStatisticsService = Substitute.For<IStatisticsService>(Array.Empty<DepositPhase>());
 
 		var handlers = new[]
 		{
@@ -126,15 +131,15 @@ public class BrandDepositEventHandlerTests
 			.Returns(new PromotionDistributePlanInfo(planId, Guid.NewGuid(), promotionId, 0L));
 
 		// Act
-		await sut.OnDepositedAsync(playerCode, depositFormId, DateTime.Now);
+		await sut.OnDepositedAsync(playerCode, depositFormId, DateTime.Now, 1000M);
 
 		// Assert
 		_ = fakePromotionServiceClient.Received(1)
 			.DistributePromotionBonusAsync(
 				Arg.Is(planId),
 				Arg.Is(playerCode),
-				Arg.Is(settings.BonusAmount),
-				Arg.Is(settings.BucketAmount),
+				Arg.Is(20M),
+				Arg.Is(200M),
 				Arg.Is(default(string)),
 				Arg.Is(eventId));
 	}

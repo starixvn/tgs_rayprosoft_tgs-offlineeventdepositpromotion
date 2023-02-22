@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Tgs.Payment.Clients;
 using Tgs.Promotion.Clients;
 using Tgs.SerialNumberGenerator;
 
@@ -37,7 +38,7 @@ internal class DepositEventHandler
 		_statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
 	}
 
-	public async ValueTask OnDepositedAsync(string playerCode, Guid formId, CancellationToken cancellationToken = default)
+	public async ValueTask OnDepositedAsync(string playerCode, Guid formId, decimal depositAmount, CancellationToken cancellationToken = default)
 	{
 		if (!_settings.Players.Contains(playerCode))
 			return;
@@ -54,12 +55,17 @@ internal class DepositEventHandler
 			.GenerateAsync(cancellationToken)
 			.ConfigureAwait(false);
 
+		var bonus = _settings.Hierarchy.GetBonus(depositAmount);
+
+		if (bonus == 0M)
+			return;
+
 		var eventData = new OfflineDepositEvent(
 			eventId,
 			playerCode,
 			BrandId,
-			_settings.BonusAmount,
-			_settings.BucketAmount,
+			bonus,
+			bonus * _settings.BucketRate,
 			formId,
 			_promotionId,
 			JsonSerializer.SerializeToDocument(_settings, OfflineDepositUtility.SerializerOptions),
@@ -77,8 +83,8 @@ internal class DepositEventHandler
 		_ = await _promotionServiceClient.DistributePromotionBonusAsync(
 			distPlan.Id,
 			playerCode,
-			_settings.BonusAmount,
-			_settings.BucketAmount,
+			eventData.Bonus,
+			eventData.BucketAmount,
 			null,
 			eventId,
 			cancellationToken).ConfigureAwait(false);
