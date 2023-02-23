@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Tgs.Promotion.Clients;
 using Tgs.SerialNumberGenerator;
 
@@ -12,6 +13,7 @@ internal class DepositEventHandler
 	private readonly ITgsRepository _tgsRepository;
 	private readonly ISerialNumberGenerator _serialNumberGenerator;
 	private readonly IStatisticsService _statisticsService;
+	private readonly ILogger<DepositEventHandler> _logger;
 
 	public Guid BrandId { get; }
 
@@ -25,7 +27,8 @@ internal class DepositEventHandler
 		IPromotionServiceClient promotionServiceClient,
 		ITgsRepository tgsRepository,
 		ISerialNumberGenerator serialNumberGenerator,
-		IStatisticsService statisticsService)
+		IStatisticsService statisticsService,
+		ILogger<DepositEventHandler> logger)
 	{
 		_promotionId = promotionId;
 		BrandId = brandId;
@@ -35,10 +38,13 @@ internal class DepositEventHandler
 		_tgsRepository = tgsRepository ?? throw new ArgumentNullException(nameof(tgsRepository));
 		_serialNumberGenerator = serialNumberGenerator ?? throw new ArgumentNullException(nameof(serialNumberGenerator));
 		_statisticsService = statisticsService ?? throw new ArgumentNullException(nameof(statisticsService));
+		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 	}
 
 	public async ValueTask OnDepositedAsync(string playerCode, Guid formId, decimal depositAmount, CancellationToken cancellationToken = default)
 	{
+		_logger.LogDebug("({promotionId}) => {settings}", _promotionId, _settings);
+
 		if (!_settings.Players.Contains(playerCode))
 			return;
 
