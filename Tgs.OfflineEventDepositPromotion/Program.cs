@@ -47,15 +47,11 @@ builder.Services
 builder.Services
 	.AddSingleton(sp => new RedisConnectionFactory(
 		builder.Configuration.GetConnectionString("Redis")!))
-	.AddPromotionClientServices((options, _) =>
-	{
-		options.Url = builder.Configuration.GetValue<Uri>("OfflineDeposit:PromotionServiceUrl")!;
-	})
+	.AddPromotionClientServices((options, _) => options.Url =
+		builder.Configuration.GetValue<Uri>("OfflineDeposit:PromotionServiceUrl")!)
 	.AddPaymentServiceClient(httpBuilder => httpBuilder
-		.ConfigureHttpClient(httpClient =>
-		{
-			httpClient.BaseAddress = builder.Configuration.GetValue<Uri>("OfflineDeposit:PaymentServiceUrl");
-		}))
+		.ConfigureHttpClient(httpClient => httpClient.BaseAddress =
+			builder.Configuration.GetValue<Uri>("OfflineDeposit:PaymentServiceUrl")))
 	.AddOfflineDepsoitPromotion()
 	.AddOfflineDepsoitPromotionRepositories((_, dbBuilder) => dbBuilder
 		.UseNpgsql("name=Tgs"))
