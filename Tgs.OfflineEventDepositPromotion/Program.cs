@@ -1,10 +1,13 @@
 ﻿using FluentdForward.OpenTelemetry.MessagePack;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Tgs.OfflineEventDepositPromotion;
 using Tgs.OfflineEventDepositPromotion.MessageQueue;
+using Tgs.Promotion.OfflineEvent.Deposit.Repositories.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +45,23 @@ builder.Services
 	.AddNatsGlobPatternExchange("*");
 
 builder.Services
+	.AddSingleton(sp => new RedisConnectionFactory(
+		builder.Configuration.GetConnectionString("Redis")!))
+	.AddPromotionClientServices((options, _) =>
+	{
+		options.Url = builder.Configuration.GetValue<Uri>("OfflineDeposit:PromotionServiceUrl")!;
+	})
+	.AddPaymentServiceClient(httpBuilder => httpBuilder
+		.ConfigureHttpClient(httpClient =>
+		{
+			httpClient.BaseAddress = builder.Configuration.GetValue<Uri>("OfflineDeposit:PaymentServiceUrl");
+		}))
+	.AddOfflineDepsoitPromotion()
+	.AddOfflineDepsoitPromotionRepositories((_, dbBuilder) => dbBuilder
+		.UseNpgsql("name=Tgs"))
+	.DecorateOfflineDepsoitPromotionForRedis(sp => sp.GetRequiredService<RedisConnectionFactory>().Database);
+
+builder.Services
 	.AddOpenTelemetry()
 	.ConfigureResource(resourceBuilder => resourceBuilder
 		.AddEnvironmentVariableDetector())
@@ -66,6 +86,9 @@ builder.Services
 			&& !httpContext.Request.Path.StartsWithSegments("/metrics")
 			&& !new[] { "html", "ico", "png", "jpg" }.Any(
 				ext => httpContext.Request.Path.Value.EndsWith($".{ext}")));
+
+builder.Services
+	.AddHealthChecks();
 
 var app = builder.Build();
 

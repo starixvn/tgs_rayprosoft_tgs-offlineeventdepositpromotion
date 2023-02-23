@@ -14,10 +14,8 @@ public class OfflineDepositSettingProcessor : IMessageProcessor
 
 		var settings = JsonSerializer.Deserialize<DepositPromotionSettings>(
 			request.Settings,
-			OfflineDepositUtility.SerializerOptions);
-
-		if (settings is null)
-			throw new InvalidOperationException("Settings is null");
+			OfflineDepositUtility.SerializerOptions)
+			?? throw new InvalidOperationException("Settings is null");
 
 		var response = new CampaignDetailResponse
 		{

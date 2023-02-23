@@ -10,5 +10,6 @@ public static class ServiceCollectionExtensions
 			.RegisterAllServiceUtilityTypes(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient)
 			.AddHostedService<DepositEventBackground>()
 			.AddSingleton<EventBus>()
-			.AddTransient<IEventSender>(sp => sp.GetRequiredService<EventBus>());
+			.AddTransient<IEventSender>(sp => sp.GetRequiredService<EventBus>())
+			.AddTransient<IStatisticsService, StatisticsService>();
 }
