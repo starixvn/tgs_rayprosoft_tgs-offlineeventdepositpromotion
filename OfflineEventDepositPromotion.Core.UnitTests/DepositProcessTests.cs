@@ -114,8 +114,8 @@ public class DepositProcessTests
 
 		// Assert
 		_ = fakePromotionServiceClient.Received(1)
-			.GetPromotionRuleAsync<DepositPromotionSettings>(Arg.Any<Guid>());
+			.GetPromotionRuleAsync<ListBrandDepositEventHandlersQueryService.PromotionRule>(Arg.Any<Guid>());
 		_ = fakePromotionServiceClient.Received(1)
-			.GetPromotionRuleAsync<DepositPromotionSettings>(Arg.Is(promotions[1].Id));
+			.GetPromotionRuleAsync<ListBrandDepositEventHandlersQueryService.PromotionRule>(Arg.Is(promotions[1].Id));
 	}
 }

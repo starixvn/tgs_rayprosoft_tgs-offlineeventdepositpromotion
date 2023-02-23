@@ -42,5 +42,5 @@ internal class ListBrandDepositEventHandlersQueryService : IGetService<ListBrand
 			.ToDictionaryAsync(brandHandler => brandHandler.BrandId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false)).AsReadOnly();
 
-	private record PromotionRule(DepositPromotionSettings CompaignDetail);
+	internal record PromotionRule(DepositPromotionSettings CompaignDetail);
 }
