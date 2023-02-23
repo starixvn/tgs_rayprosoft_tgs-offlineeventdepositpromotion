@@ -18,19 +18,24 @@ public class RedisCacheStatisticsServiceTests
 
 		var promotionId = Guid.NewGuid();
 		var playerCode = "test1";
+		var promotionEndTime = DateTime.UtcNow.AddDays(1D);
 
 		_ = fakeRedisDatabase.StringSetAsync(
 			Arg.Is(new RedisKey($"Tgs:Promotion:OfflineDeposit:{promotionId}:{playerCode}")),
 			Arg.Any<RedisValue>(),
+			expiry: Arg.Any<TimeSpan?>(),
 			when: Arg.Is(When.NotExists))
 			.Returns(true);
 
 		// Act
-		_ = await sut.AchievePromotionAsync(promotionId, playerCode);
+		_ = await sut.AchievePromotionAsync(promotionId, playerCode, promotionEndTime);
 
 		// Assert
 		_ = fakeSourceService.Received(1)
-			.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode));
+			.AchievePromotionAsync(
+				Arg.Is(promotionId),
+				Arg.Is(playerCode),
+				Arg.Is(promotionEndTime));
 	}
 
 	[Fact]
@@ -52,11 +57,14 @@ public class RedisCacheStatisticsServiceTests
 			.Returns(false);
 
 		// Act
-		var actual = await sut.AchievePromotionAsync(promotionId, playerCode);
+		var actual = await sut.AchievePromotionAsync(promotionId, playerCode, DateTime.UtcNow.AddDays(1D));
 
 		// Assert
 		Assert.True(actual);
 		_ = fakeSourceService.DidNotReceive()
-			.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode));
+			.AchievePromotionAsync(
+				Arg.Is(promotionId),
+				Arg.Is(playerCode),
+				Arg.Any<DateTime>());
 	}
 }

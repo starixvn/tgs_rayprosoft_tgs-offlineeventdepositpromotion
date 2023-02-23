@@ -17,7 +17,10 @@ public class StatisticsServiceTests
 		var playerCode = "test1";
 
 		// Act
-		_ = await sut.AchievePromotionAsync(promotionId, playerCode);
+		_ = await sut.AchievePromotionAsync(
+			promotionId,
+			playerCode,
+			DateTime.UtcNow.AddDays(1D));
 
 		// Assert
 		_ = fakeTgsRepository.Received(1)

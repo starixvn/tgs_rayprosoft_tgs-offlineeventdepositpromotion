@@ -12,6 +12,7 @@ public class StatisticsService : IStatisticsService
 	public ValueTask<bool> AchievePromotionAsync(
 		Guid promotionId,
 		string playerCode,
+		DateTime promotionEndTime,
 		CancellationToken cancellationToken = default)
 		=> _tgsRepository.AchievePromotionAsync(
 			promotionId,

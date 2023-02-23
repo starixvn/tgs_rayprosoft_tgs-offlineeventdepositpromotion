@@ -82,7 +82,10 @@ public class DepositEventHandlerTests
 			fakeStatisticsService,
 			NullLogger<DepositEventHandler>.Instance);
 
-		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
+		_ = fakeStatisticsService.AchievePromotionAsync(
+			Arg.Is(promotionId),
+			Arg.Is(playerCode),
+			Arg.Any<DateTime>())
 			.Returns(true);
 
 		// Act
@@ -128,7 +131,10 @@ public class DepositEventHandlerTests
 			fakeStatisticsService,
 			NullLogger<DepositEventHandler>.Instance);
 
-		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
+		_ = fakeStatisticsService.AchievePromotionAsync(
+			Arg.Is(promotionId),
+			Arg.Is(playerCode),
+			Arg.Any<DateTime>())
 			.Returns(false);
 
 		var eventId = Guid.NewGuid();
@@ -203,7 +209,10 @@ public class DepositEventHandlerTests
 			fakeStatisticsService,
 			NullLogger<DepositEventHandler>.Instance);
 
-		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
+		_ = fakeStatisticsService.AchievePromotionAsync(
+			Arg.Is(promotionId),
+			Arg.Is(playerCode),
+			Arg.Any<DateTime>())
 			.Returns(false);
 
 		// Act

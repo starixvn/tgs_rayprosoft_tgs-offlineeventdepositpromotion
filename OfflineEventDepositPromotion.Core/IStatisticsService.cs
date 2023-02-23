@@ -2,5 +2,5 @@
 
 public interface IStatisticsService
 {
-	ValueTask<bool> AchievePromotionAsync(Guid promotionId, string playerCode, CancellationToken cancellationToken = default);
+	ValueTask<bool> AchievePromotionAsync(Guid promotionId, string playerCode, DateTime promotionEndTime, CancellationToken cancellationToken = default);
 }

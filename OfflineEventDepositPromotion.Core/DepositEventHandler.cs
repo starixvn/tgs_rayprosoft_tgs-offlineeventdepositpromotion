@@ -51,6 +51,7 @@ internal class DepositEventHandler
 		var isAchieve = await _statisticsService.AchievePromotionAsync(
 			_promotionId,
 			playerCode,
+			EventRange.End,
 			cancellationToken).ConfigureAwait(false);
 
 		if (isAchieve)

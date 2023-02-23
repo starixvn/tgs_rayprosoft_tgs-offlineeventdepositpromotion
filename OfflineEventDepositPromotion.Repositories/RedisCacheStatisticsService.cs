@@ -16,13 +16,16 @@ internal class RedisCacheStatisticsService : IStatisticsService
 	public async ValueTask<bool> AchievePromotionAsync(
 		Guid promotionId,
 		string playerCode,
+		DateTime promotionEndTime,
 		CancellationToken cancellationToken = default)
 	{
 		var key = $"Tgs:Promotion:OfflineDeposit:{promotionId}:{playerCode}";
+		var expiry = promotionEndTime.ToUniversalTime().AddDays(1D) - DateTime.UtcNow;
 
 		var isSet = await _redisDatabase.StringSetAsync(
 			key,
 			Environment.MachineName,
+			expiry: expiry,
 			when: When.NotExists).ConfigureAwait(false);
 
 		return !isSet
@@ -30,6 +33,7 @@ internal class RedisCacheStatisticsService : IStatisticsService
 			: await _source.AchievePromotionAsync(
 				promotionId,
 				playerCode,
+				promotionEndTime,
 				cancellationToken).ConfigureAwait(false);
 	}
 }
