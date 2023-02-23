@@ -23,16 +23,16 @@ internal class ListBrandDepositEventHandlersQueryService : IGetService<ListBrand
 				info.EventDuring.From.AddHours(-1D),
 				info.EventDuring.To.AddHours(1D)).InTheRange(DateTime.UtcNow))
 			.Select(info => _promotionServiceClient
-				.GetPromotionRuleAsync<DepositPromotionSettings>(info.Id, cancellationToken)
+				.GetPromotionRuleAsync<PromotionRule>(info.Id, cancellationToken)
 				.AsTask()
 				.ToAsyncEnumerable()
-				.Where(settings => settings is not null)
-				.Select(settings => ActivatorUtilities.CreateInstance<DepositEventHandler>(
+				.Where(rule => rule is not null)
+				.Select(rule => ActivatorUtilities.CreateInstance<DepositEventHandler>(
 					_serviceProvider,
 					info.Id,
 					info.BrandId,
 					new EventRange(info.EventDuring.From, info.EventDuring.To),
-					settings!)))
+					rule!.CompaignDetail)))
 			.Merge()
 			.GroupBy(handler => handler.BrandId)
 			.Select(g => ActivatorUtilities.CreateInstance<BrandDepositEventHandler>(
@@ -41,4 +41,6 @@ internal class ListBrandDepositEventHandlersQueryService : IGetService<ListBrand
 				g.ToEnumerable()))
 			.ToDictionaryAsync(brandHandler => brandHandler.BrandId, cancellationToken: cancellationToken)
 			.ConfigureAwait(false)).AsReadOnly();
+
+	private record PromotionRule(DepositPromotionSettings CompaignDetail);
 }
