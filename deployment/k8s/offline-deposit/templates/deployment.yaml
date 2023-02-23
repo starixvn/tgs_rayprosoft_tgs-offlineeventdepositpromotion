@@ -57,19 +57,26 @@ spec:
                 secretKeyRef:
                   name: tgs-connections
                   key: nats
-            
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          volumeMounts:
+            - mountPath: /config/appsettings.json
+              name: appsettings
+              readOnly: true
+              subPath: appsettings.json
           livenessProbe:
             httpGet:
-              path: /
-              port: http
-          readinessProbe:
+              path: /healthz
+              port: 80
+            periodSeconds: 5
+          startupProbe:
             httpGet:
-              path: /
-              port: http
+              path: /healthz
+              port: 80
+            periodSeconds: 2
+            failureThreshold: 30
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: monitor
