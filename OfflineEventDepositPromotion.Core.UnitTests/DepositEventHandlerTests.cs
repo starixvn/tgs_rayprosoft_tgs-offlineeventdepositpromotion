@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using ExpectedObjects;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Tgs.Promotion.Clients;
 using Tgs.Promotion.OfflineEvent.Deposit;
@@ -35,7 +36,8 @@ public class DepositEventHandlerTests
 			fakePromotionServiceClient,
 			fakeTgsRepository,
 			fakeSerialNumberGenerator,
-			fakeStatisticsService);
+			fakeStatisticsService,
+			NullLogger<DepositEventHandler>.Instance);
 
 		// Act
 		await sut.OnDepositedAsync(playerCode, depositFormId, 1000M);
@@ -77,7 +79,8 @@ public class DepositEventHandlerTests
 			fakePromotionServiceClient,
 			fakeTgsRepository,
 			fakeSerialNumberGenerator,
-			fakeStatisticsService);
+			fakeStatisticsService,
+			NullLogger<DepositEventHandler>.Instance);
 
 		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
 			.Returns(true);
@@ -122,7 +125,8 @@ public class DepositEventHandlerTests
 			fakePromotionServiceClient,
 			fakeTgsRepository,
 			fakeSerialNumberGenerator,
-			fakeStatisticsService);
+			fakeStatisticsService,
+			NullLogger<DepositEventHandler>.Instance);
 
 		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
 			.Returns(false);
@@ -196,7 +200,8 @@ public class DepositEventHandlerTests
 			fakePromotionServiceClient,
 			fakeTgsRepository,
 			fakeSerialNumberGenerator,
-			fakeStatisticsService);
+			fakeStatisticsService,
+			NullLogger<DepositEventHandler>.Instance);
 
 		_ = fakeStatisticsService.AchievePromotionAsync(Arg.Is(promotionId), Arg.Is(playerCode))
 			.Returns(false);

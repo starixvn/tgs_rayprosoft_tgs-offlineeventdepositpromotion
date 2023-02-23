@@ -37,7 +37,8 @@ public class BrandDepositEventHandlerTests
 				fakePromotionServiceClient,
 				fakeTgsRepository,
 				fakeSerialNumberGenerator,
-				fakeStatisticsService),
+				fakeStatisticsService,
+				NullLogger<DepositEventHandler>.Instance),
 			new DepositEventHandler(
 				promotionId,
 				brandId,
@@ -46,7 +47,8 @@ public class BrandDepositEventHandlerTests
 				fakePromotionServiceClient,
 				fakeTgsRepository,
 				fakeSerialNumberGenerator,
-				fakeStatisticsService)
+				fakeStatisticsService,
+				NullLogger < DepositEventHandler >.Instance)
 		};
 
 		var sut = new BrandDepositEventHandler(
@@ -105,7 +107,8 @@ public class BrandDepositEventHandlerTests
 				fakePromotionServiceClient,
 				fakeTgsRepository,
 				fakeSerialNumberGenerator,
-				fakeStatisticsService),
+				fakeStatisticsService,
+				NullLogger < DepositEventHandler >.Instance),
 			new DepositEventHandler(
 				promotionId,
 				brandId,
@@ -114,7 +117,8 @@ public class BrandDepositEventHandlerTests
 				fakePromotionServiceClient,
 				fakeTgsRepository,
 				fakeSerialNumberGenerator,
-				fakeStatisticsService)
+				fakeStatisticsService,
+				NullLogger<DepositEventHandler>.Instance)
 		};
 
 		var sut = new BrandDepositEventHandler(
