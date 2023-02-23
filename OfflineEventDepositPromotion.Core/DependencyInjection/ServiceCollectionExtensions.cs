@@ -11,5 +11,6 @@ public static class ServiceCollectionExtensions
 			.AddHostedService<DepositEventBackground>()
 			.AddSingleton<EventBus>()
 			.AddTransient<IEventSender>(sp => sp.GetRequiredService<EventBus>())
-			.AddTransient<IStatisticsService, StatisticsService>();
+			.AddTransient<IStatisticsService, StatisticsService>()
+			.AddSerialNumberGenerator();
 }
