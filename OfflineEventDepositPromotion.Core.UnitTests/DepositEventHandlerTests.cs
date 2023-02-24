@@ -150,7 +150,7 @@ public class DepositEventHandlerTests
 			playerCode,
 			brandId,
 			20M,
-			200M,
+			9200M,
 			depositFormId,
 			promotionId,
 			JsonSerializer.SerializeToDocument(settings, OfflineDepositUtility.SerializerOptions),
@@ -175,7 +175,7 @@ public class DepositEventHandlerTests
 				Arg.Is(planId),
 				Arg.Is(playerCode),
 				Arg.Is(20M),
-				Arg.Is(200M),
+				Arg.Is(9200M),
 				Arg.Is(default(string)),
 				Arg.Is(eventId));
 	}

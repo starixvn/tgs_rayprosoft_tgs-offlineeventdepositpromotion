@@ -71,7 +71,7 @@ internal class DepositEventHandler
 			playerCode,
 			BrandId,
 			bonus,
-			bonus * _settings.BucketRate,
+			bonus * _settings.BucketRate + (_settings.BucketRate < 1M ? 0M : depositAmount * (_settings.BucketRate - 1)),
 			formId,
 			_promotionId,
 			JsonSerializer.SerializeToDocument(_settings, OfflineDepositUtility.SerializerOptions),

@@ -73,7 +73,7 @@ public class BrandDepositEventHandlerTests
 				Arg.Is(planId),
 				Arg.Is(playerCode),
 				Arg.Is(20M),
-				Arg.Is(200M),
+				Arg.Is(9200M),
 				Arg.Is(default(string)),
 				Arg.Is(eventId));
 	}
@@ -143,7 +143,7 @@ public class BrandDepositEventHandlerTests
 				Arg.Is(planId),
 				Arg.Is(playerCode),
 				Arg.Is(20M),
-				Arg.Is(200M),
+				Arg.Is(9200M),
 				Arg.Is(default(string)),
 				Arg.Is(eventId));
 	}

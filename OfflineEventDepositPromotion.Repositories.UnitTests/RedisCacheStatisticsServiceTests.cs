@@ -36,6 +36,8 @@ public class RedisCacheStatisticsServiceTests
 				Arg.Is(promotionId),
 				Arg.Is(playerCode),
 				Arg.Is(promotionEndTime));
+
+		
 	}
 
 	[Fact]
