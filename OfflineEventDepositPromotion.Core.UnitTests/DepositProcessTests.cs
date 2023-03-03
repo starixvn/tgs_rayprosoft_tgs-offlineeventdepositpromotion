@@ -4,13 +4,8 @@ using NSubstitute;
 using Tgs.Promotion.Clients;
 using Tgs.Promotion.OfflineEvent.Deposit;
 using Tgs.Promotion.OfflineEvent.Deposit.ApplicationServices;
-using Tgs.ServiceUtility;
 
 namespace OfflineEventDepositPromotion.Core.UnitTests;
-
-using ListBrandHandlersQueryService = IGetService<
-	ListBrandDepositEventHandlersQuery,
-	IReadOnlyDictionary<Guid, BrandDepositEventHandler>>;
 
 public class DepositProcessTests
 {
@@ -18,9 +13,9 @@ public class DepositProcessTests
 	public async Task 處理存款事件會根據BrandId來取得Brand的處理器執行()
 	{
 		// Arrange
-		var fakeListBrandHandlersQueryService = Substitute.For<ListBrandHandlersQueryService>();
+		var promotionDataService = new PromotionDataService();
 
-		var sut = new HandleDepositedEventCommandService(fakeListBrandHandlersQueryService);
+		var sut = new HandleDepositedEventCommandService(promotionDataService);
 
 		var command = new HandleDepositedEventCommand(
 			   new DepositedEvent(
@@ -35,11 +30,10 @@ public class DepositProcessTests
 			Array.Empty<DepositEventHandler>(),
 			NullLogger<BrandDepositEventHandler>.Instance);
 
-		_ = fakeListBrandHandlersQueryService.GetAsync(Arg.Is(ListBrandDepositEventHandlersQuery.Default))
-			.Returns(new Dictionary<Guid, BrandDepositEventHandler>
-			{
-				[command.Event.BrandId] = fakeBrandHandler
-			}.AsReadOnly());
+		promotionDataService.RenewHandlers(new Dictionary<Guid, BrandDepositEventHandler>
+		{
+			[command.Event.BrandId] = fakeBrandHandler
+		}.AsReadOnly());
 
 		// Act
 		await sut.ExecuteAsync(command);

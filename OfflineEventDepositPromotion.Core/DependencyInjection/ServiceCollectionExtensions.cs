@@ -9,8 +9,10 @@ public static class ServiceCollectionExtensions
 		=> services
 			.RegisterAllServiceUtilityTypes(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient)
 			.AddHostedService<DepositEventBackground>()
+			.AddHostedService<PromotionListQueryBackground>()
 			.AddSingleton<EventBus>()
 			.AddTransient<IEventSender>(sp => sp.GetRequiredService<EventBus>())
 			.AddTransient<IStatisticsService, StatisticsService>()
+			.AddSingleton<PromotionDataService>()
 			.AddSerialNumberGenerator();
 }

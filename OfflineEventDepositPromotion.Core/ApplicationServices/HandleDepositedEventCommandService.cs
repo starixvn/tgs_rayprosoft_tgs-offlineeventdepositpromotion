@@ -4,19 +4,19 @@ namespace Tgs.Promotion.OfflineEvent.Deposit.ApplicationServices;
 
 internal class HandleDepositedEventCommandService : ICommandService<HandleDepositedEventCommand>
 {
-	private readonly IGetService<ListBrandDepositEventHandlersQuery, IReadOnlyDictionary<Guid, BrandDepositEventHandler>> _listBrandHandlersService;
+	private readonly PromotionDataService _promotionDataService;
 
 	public HandleDepositedEventCommandService(
-		IGetService<ListBrandDepositEventHandlersQuery, IReadOnlyDictionary<Guid, BrandDepositEventHandler>> listBrandHandlersService)
+		PromotionDataService promotionDataService)
 	{
-		_listBrandHandlersService = listBrandHandlersService ?? throw new ArgumentNullException(nameof(listBrandHandlersService));
+		_promotionDataService = promotionDataService ?? throw new ArgumentNullException(nameof(promotionDataService));
 	}
 
 	public async ValueTask ExecuteAsync(HandleDepositedEventCommand command, CancellationToken cancellationToken = default)
 	{
-		var brandDict = await _listBrandHandlersService.GetAsync(
-			new(),
-			cancellationToken).ConfigureAwait(false);
+		var brandDict = await _promotionDataService
+			.GetHandlersAsync(cancellationToken)
+			.ConfigureAwait(false);
 
 		if (brandDict.TryGetValue(command.Event.BrandId, out var brandHandler))
 			await brandHandler.OnDepositedAsync(
