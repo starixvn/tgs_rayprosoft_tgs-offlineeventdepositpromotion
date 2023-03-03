@@ -5,7 +5,7 @@ namespace Tgs.Promotion.OfflineEvent.Deposit;
 
 internal class PromotionDataService
 {
-	public ReplaySubject<IReadOnlyDictionary<Guid, BrandDepositEventHandler>> _subject = new(1);
+	private readonly ReplaySubject<IReadOnlyDictionary<Guid, BrandDepositEventHandler>> _subject = new(1);
 
 	public async ValueTask<IReadOnlyDictionary<Guid, BrandDepositEventHandler>> GetHandlersAsync(CancellationToken cancellationToken = default)
 		=> await _subject.ToAsyncEnumerable()
