@@ -1,4 +1,5 @@
 ﻿using Tgs.Promotion.OfflineEvent.Deposit;
+using Xunit;
 
 namespace OfflineEventDepositPromotion.Core.UnitTests;
 
@@ -38,5 +39,22 @@ public class DepositHierarchyTests
 
 		// Assert
 		Assert.Equal(0M, actual);
+	}
+
+	[Fact]
+	public void 儲值金額是500應該取得符合500的獎勵()
+	{
+		// Arrange
+		var sut = new DepositHierarchy(
+			new[] {
+				new DepositPhase(500M, 1500M),
+				new DepositPhase(1000M, 3000M)
+			});
+
+		// Act
+		var actual = sut.GetBonus(500M);
+
+		// Assert
+		Assert.Equal(1500M, actual);
 	}
 }
